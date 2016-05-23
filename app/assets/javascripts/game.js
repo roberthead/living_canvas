@@ -1,8 +1,8 @@
 var Game = {
   canvasId: "gameCanvas",
-  soundID: "Thunder",
+  soundId: "Thunder",
 
-  init: function() {
+  start: function() {
     this.loadSound();
     this.stage = new createjs.Stage(this.canvasId);
     this.drawCircle();
@@ -16,22 +16,30 @@ var Game = {
     circle.y = 100;
 
     circle.addEventListener("click", function(target) {
-      Game.playSound("Thunder");
+      Game.playSound(Game.soundId);
     });
 
     this.stage.addChild(circle);
   },
 
   loadSound: function() {
-    createjs.Sound.registerSound("sounds/thunder.mp3", this.soundID);
+    createjs.Sound.registerSound("sounds/thunder.mp3", Game.soundId);
   },
 
-  playSound: function(soundID) {
-    Game.log(this.soundID);
-    createjs.Sound.play(soundID);
+  playSound: function(soundId) {
+    Game.log(soundId);
+    createjs.Sound.play(soundId);
   },
 
   log: function(content) {
     console.log(content);
   }
 };
+
+(function(window, document, undefined) {
+  function start() {
+    Game.start();
+  }
+
+  window.addEventListener('load', start, false);
+})(window, document);
