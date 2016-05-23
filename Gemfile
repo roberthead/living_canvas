@@ -28,6 +28,7 @@ gem 'haml'
 gem 'haml-rails'
 
 group :development, :test do
-  gem 'rspec-rails'
+  gem "rails-controller-testing", :git => "https://github.com/rails/rails-controller-testing"
+  gem "rspec-rails", "3.5.0.beta1"
   gem 'capybara'
 end
