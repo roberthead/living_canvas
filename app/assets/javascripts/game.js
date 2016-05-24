@@ -1,13 +1,16 @@
 function Sound(id, uri) {
+  var myself = this;
+  this.id = id;
+
   this.register = function(uri) {
     createjs.Sound.registerSound(uri, this.id);
   };
 
-  this.play = function() {
-    createjs.Sound.play(this.id);
+  this.play = function(event) {
+    console.log(event);
+    createjs.Sound.play(myself.id);
   }
 
-  this.id = id;
   this.register(uri);
 }
 
@@ -21,9 +24,7 @@ function Circle(x, y, radius, color, sound) {
   }
 
   this.addClickSound = function(sound) {
-    this.easelShape.addEventListener("click", function(target) {
-      sound.play();
-    });
+    this.easelShape.addEventListener("click", sound.play);
   }
 
   this.easelShape = this.defineEaselShape(x, y, radius, color);
@@ -32,13 +33,20 @@ function Circle(x, y, radius, color, sound) {
 
 var Game = {
   canvasId: "gameCanvas",
+  circleCount: 0,
 
   start: function() {
-    this.sound = new Sound("Thunder", "sounds/thunder.mp3");
-    this.circle = new Circle(100, 100, 50, "DeepSkyBlue");
     this.stage = new createjs.Stage(this.canvasId);
-    this.stage.addChild(this.circle.easelShape);
+    this.addCircle("DeepSkyBlue", "sounds/thunder.mp3");
+    this.addCircle("Red", "sounds/thunder.mp3");
     this.stage.update();
+  },
+
+  addCircle: function(color, soundUri) {
+    this.circleCount++;
+    this.sound = new Sound("Sound" + this.circleCount, soundUri);
+    this.circle = new Circle(200 * this.circleCount, 100, 50, color, this.sound);
+    this.stage.addChild(this.circle.easelShape);
   },
 
   log: function(content) {
