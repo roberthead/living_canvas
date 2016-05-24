@@ -40,7 +40,7 @@ var Game = {
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
     this.addCircle("DeepSkyBlue", "sounds/thunder.mp3");
-    this.addCircle("Red", "sounds/thunder.mp3");
+    this.addCircle("Red", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
     this.stage.update();
   },
 
