@@ -1,3 +1,4 @@
+// Sound class
 function Sound(id, uri) {
   var myself = this;
   this.id = id;
@@ -7,13 +8,13 @@ function Sound(id, uri) {
   };
 
   this.play = function(event) {
-    console.log(event);
     createjs.Sound.play(myself.id);
   }
 
   this.register(uri);
 }
 
+// Circle class
 function Circle(x, y, radius, color, sound) {
   this.defineEaselShape = function(x, y, radius, color) {
     var circle = new createjs.Shape();
@@ -31,6 +32,7 @@ function Circle(x, y, radius, color, sound) {
   this.addClickSound(sound);
 }
 
+// Game singleton
 var Game = {
   canvasId: "gameCanvas",
   circleCount: 0,
