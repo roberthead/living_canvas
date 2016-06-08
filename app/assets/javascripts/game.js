@@ -17,6 +17,8 @@ var Game = {
   counter: null,
   nightSounds: null,
   daySounds: null,
+  drumTrack: null,
+  drumTail: null,
 
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
@@ -25,6 +27,7 @@ var Game = {
     this.addCounter();
     this.addNightSounds();
     this.addDaySounds();
+    this.addDrumTrack();
     this.stage.update();
     window.requestAnimationFrame(this.executeFrame.bind(this));
   },
@@ -51,15 +54,22 @@ var Game = {
 
   processMotion: function() {
     var elapsedSeconds = Math.floor(this.elapsedTime / 1000);
-    if (this.secondsDisplay != elapsedSeconds) {
-      this.secondsDisplay = elapsedSeconds;
-      this.counter.update(this.secondsDisplay);
+    if (elapsedSeconds > 1) {
+      if (this.secondsDisplay != elapsedSeconds) {
+        this.secondsDisplay = elapsedSeconds;
+        this.counter.update(this.secondsDisplay);
+      }
+      for (circle of this.circles) {
+        circle.move(this.elapsedFrameTime, this.stage);
+      }
+      this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
+      this.daySounds.respondToLocation(this.circles[0].easelShape.x);
+      if (elapsedSeconds == 3) {
+        this.drumTrack.trigger();
+      } else if (elapsedSeconds == 4) {
+        this.drumTrack.wrapUp(this.drumTail);
+      }
     }
-    for (circle of this.circles) {
-      circle.move(this.elapsedFrameTime, this.stage);
-    }
-    this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
-    this.daySounds.respondToLocation(this.circles[0].easelShape.x);
   },
 
   drawFrame: function() {
@@ -85,6 +95,11 @@ var Game = {
 
   addDaySounds: function() {
     this.daySounds = new HorizontalSound("Day", "//s3-us-west-2.amazonaws.com/pagescape/forest-crows.mp3", 960);
+  },
+
+  addDrumTrack: function() {
+    this.drumTail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
+    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/DrumsVerse.m4a");
   },
 
   log: function(content) {

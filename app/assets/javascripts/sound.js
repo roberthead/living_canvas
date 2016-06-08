@@ -3,17 +3,23 @@ function Sound(id, uri) {
   var myself = this;
   this.id = id;
   this.playInstance = null;
+  this.delay = 0;
 
   this.register = function(uri) {
     createjs.Sound.registerSound(uri, this.id);
   };
 
   this.play = function(event) {
-    this.playInstance = createjs.Sound.play(myself.id);
+    console.log("Play " + myself.id);
+    this.playInstance = createjs.Sound.play(myself.id, { delay: myself.delay });
   }
 
   this.setVolume = function(volume) {
     this.playInstance.volume = volume;
+  }
+
+  this.setDelay = function(delay) {
+    this.delay = delay;
   }
 
   this.register(uri);
@@ -46,4 +52,48 @@ function HorizontalSound(id, uri, x) {
       }
     }
   }
+
+  return this;
+}
+
+function SynchronizedSound(id, uri) {
+  this.sound = new Sound(id, uri);
+  this.playing = false;
+  this.playInstance = null;
+  this.tailInstance = null;
+
+  this.nextDownbeat = function(elapsedTime) {
+    return Math.ceil((new Date().getTime() - elapsedTime) / 2000) * 2000;
+  }
+
+  this.millisecondsToNextDownbeat = function(elapsedTime) {
+    return elapsedTime + this.nextDownbeat();
+  }
+
+  this.trigger = function() {
+    if (!this.playing) {
+      console.log('trigger drumTrack');
+      this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(), loop: -1 });
+      this.playing = true;
+    }
+  }
+
+  this.wrapUp = function(tailSound) {
+    if (this.playing) {
+      console.log('wrapUp');
+      this.playInstance.loop = 0;
+      var that = this;
+      setTimeout(function() {
+        that.playInstance.volume = 0;
+        },
+        this.millisecondsToNextDownbeat()
+      );
+      // this.playInstance.volume = 0;
+      this.playing = false;
+      tailSound.setDelay(this.millisecondsToNextDownbeat());
+      this.tailInstance = tailSound.play();
+    }
+  }
+
+  return this;
 }
