@@ -32,3 +32,7 @@ group :development, :test do
   gem "rspec-rails", "3.5.0.beta1"
   gem 'capybara'
 end
+
+group :production do
+  gem 'rails_12factor'
+end
