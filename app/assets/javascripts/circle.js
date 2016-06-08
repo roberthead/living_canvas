@@ -1,5 +1,5 @@
 // Circle class
-function Circle(x, y, radius, color, sound) {
+function Circle(x, y, radius, color, sound, onBottom) {
   this.defineEaselShape = function(x, y, radius, color) {
     var circle = new createjs.Shape();
     circle.graphics.beginFill(color).drawCircle(0, 0, radius);
@@ -21,16 +21,17 @@ function Circle(x, y, radius, color, sound) {
   this.sound = sound;
   this.easelShape = this.defineEaselShape(x, y, radius, color);
   this.addClickSound(sound);
+  this.onBottom = onBottom;
+
+  this.setOnBottom = function(onBottom) {
+    this.onBottom = onBottom;
+  }
 
   var maxSpeed = 5;
   this.vector = new Vector(
     Math.random() * 2 * maxSpeed - maxSpeed,
     Math.random() * 2 * maxSpeed - maxSpeed
   );
-
-  this.collidingWith = function(otherCircle) {
-
-  }
 
   this.move = function(elapsedTime, stage) {
     this.easelShape.x = this.easelShape.x + this.vector.xVelocity * elapsedTime / 50.0;
@@ -42,11 +43,11 @@ function Circle(x, y, radius, color, sound) {
     if (this.easelShape.x < xMin) {
       this.easelShape.x = xMin;
       this.vector.xVelocity = Math.abs(this.vector.xVelocity);
-      this.playSound();
+      // this.playSound();
     } else if (this.easelShape.x > xMax) {
       this.easelShape.x = xMax;
       this.vector.xVelocity = Math.abs(this.vector.xVelocity) * -1;
-      this.playSound();
+      // this.playSound();
     }
     if (this.easelShape.y < yMin) {
       this.easelShape.y = yMin;
@@ -55,7 +56,9 @@ function Circle(x, y, radius, color, sound) {
     } else if (this.easelShape.y > yMax) {
       this.easelShape.y = yMax;
       this.vector.yVelocity = Math.abs(this.vector.yVelocity) * -1;
-      this.playSound();
+      if (this.onBottom) {
+        this.onBottom();
+      }
     }
   }
 

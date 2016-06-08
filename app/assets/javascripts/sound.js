@@ -56,29 +56,29 @@ function HorizontalSound(id, uri, x) {
   return this;
 }
 
-function SynchronizedSound(id, uri) {
+function SynchronizedSound(id, uri, tail) {
   this.sound = new Sound(id, uri);
+  this.tail = tail;
+
   this.playing = false;
   this.playInstance = null;
   this.tailInstance = null;
 
-  this.nextDownbeat = function(elapsedTime) {
-    return Math.ceil((new Date().getTime() - elapsedTime) / 2000) * 2000;
-  }
-
   this.millisecondsToNextDownbeat = function(elapsedTime) {
-    return elapsedTime + this.nextDownbeat();
+    return 2000 - elapsedTime % 2000;
   }
 
-  this.trigger = function() {
+  this.trigger = function(elapsedTime) {
     if (!this.playing) {
       console.log('trigger drumTrack');
-      this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(), loop: -1 });
+      this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(elapsedTime), loop: -1 });
       this.playing = true;
+    } else {
+      this.wrapUp(elapsedTime);
     }
   }
 
-  this.wrapUp = function(tailSound) {
+  this.wrapUp = function(elapsedTime) {
     if (this.playing) {
       console.log('wrapUp');
       this.playInstance.loop = 0;
@@ -86,12 +86,12 @@ function SynchronizedSound(id, uri) {
       setTimeout(function() {
         that.playInstance.volume = 0;
         },
-        this.millisecondsToNextDownbeat()
+        this.millisecondsToNextDownbeat(elapsedTime)
       );
       // this.playInstance.volume = 0;
       this.playing = false;
-      tailSound.setDelay(this.millisecondsToNextDownbeat());
-      this.tailInstance = tailSound.play();
+      this.tail.setDelay(this.millisecondsToNextDownbeat(elapsedTime));
+      this.tailInstance = this.tail.play();
     }
   }
 

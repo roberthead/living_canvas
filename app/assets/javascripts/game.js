@@ -54,21 +54,16 @@ var Game = {
 
   processMotion: function() {
     var elapsedSeconds = Math.floor(this.elapsedTime / 1000);
+    if (this.secondsDisplay != elapsedSeconds) {
+      this.secondsDisplay = elapsedSeconds;
+      this.counter.update(this.secondsDisplay);
+    }
     if (elapsedSeconds > 1) {
-      if (this.secondsDisplay != elapsedSeconds) {
-        this.secondsDisplay = elapsedSeconds;
-        this.counter.update(this.secondsDisplay);
-      }
       for (circle of this.circles) {
         circle.move(this.elapsedFrameTime, this.stage);
       }
       this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
       this.daySounds.respondToLocation(this.circles[0].easelShape.x);
-      if (elapsedSeconds == 3) {
-        this.drumTrack.trigger();
-      } else if (elapsedSeconds == 4) {
-        this.drumTrack.wrapUp(this.drumTail);
-      }
     }
   },
 
@@ -98,8 +93,10 @@ var Game = {
   },
 
   addDrumTrack: function() {
-    this.drumTail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
-    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/DrumsVerse.m4a");
+    var tail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
+    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/DrumsVerse.m4a", tail);
+    var that = this;
+    this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime); } );
   },
 
   log: function(content) {
