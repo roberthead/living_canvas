@@ -32,6 +32,18 @@ function Circle(x, y, radius, color, sound, onBottom) {
     Math.random() * 2 * maxSpeed - maxSpeed,
     Math.random() * 2 * maxSpeed - maxSpeed
   );
+  if (this.vector.xVelocity < 0 && this.vector.xVelocity > -1) {
+    this.vector.xVelocity = this.vector.xVelocity - 1.5;
+  }
+  if (this.vector.xVelocity > 0 && this.vector.xVelocity < 1) {
+    this.vector.xVelocity = this.vector.xVelocity + 1.5;
+  }
+  if (this.vector.yVelocity < 0 && this.vector.yVelocity > -1) {
+    this.vector.yVelocity = this.vector.yVelocity - 1.5;
+  }
+  if (this.vector.yVelocity > 0 && this.vector.yVelocity < 1) {
+    this.vector.yVelocity = this.vector.yVelocity + 1.5;
+  }
 
   this.move = function(elapsedTime, stage) {
     this.easelShape.x = this.easelShape.x + this.vector.xVelocity * elapsedTime / 50.0;
