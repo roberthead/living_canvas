@@ -19,10 +19,12 @@ var Game = {
   daySounds: null,
   drumTrack: null,
   drumTail: null,
+  stingerSound: null,
 
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
-    this.addCircle("#222277", "sounds/thunder.mp3");
+    this.addCircle("Orange", "sounds/thunder.mp3");
+    this.stingerSound = new SynchronizedSound("Stinger", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3", null);
     // this.addCircle("#552200", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
     this.addCounter();
     this.addNightSounds();
@@ -58,12 +60,23 @@ var Game = {
       this.secondsDisplay = elapsedSeconds;
       this.counter.update(this.secondsDisplay);
     }
-    if (elapsedSeconds > 1) {
+    if (elapsedSeconds < 1) {
+      // this.stingerSound.trigger(this.elapsedTime);
+    } else {
       for (circle of this.circles) {
         circle.move(this.elapsedFrameTime, this.stage);
       }
       this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
       this.daySounds.respondToLocation(this.circles[0].easelShape.x);
+      if (elapsedSeconds == 60) {
+        var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0);
+        stingerInstance.loop = 0;
+        stingerInstance.volume = 0;
+      }
+      if (elapsedSeconds >= 60) {
+        this.circles[0].vector.xVelocity = this.circles[0].vector.xVelocity * (60/61);
+        this.circles[0].vector.yVelocity = this.circles[0].vector.yVelocity * (60/61);
+      }
     }
   },
 
@@ -96,7 +109,7 @@ var Game = {
     var tail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
     this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/DrumsVerse.m4a", tail);
     var that = this;
-    this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime); } );
+    this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime, -1); } );
   },
 
   log: function(content) {

@@ -68,14 +68,15 @@ function SynchronizedSound(id, uri, tail) {
     return 2000 - elapsedTime % 2000;
   }
 
-  this.trigger = function(elapsedTime) {
+  this.trigger = function(elapsedTime, loop) {
     if (!this.playing) {
       console.log('trigger drumTrack');
-      this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(elapsedTime), loop: -1 });
+      this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(elapsedTime), loop: loop });
       this.playing = true;
     } else {
       this.wrapUp(elapsedTime);
     }
+    return this.playInstance;
   }
 
   this.wrapUp = function(elapsedTime) {
@@ -90,8 +91,10 @@ function SynchronizedSound(id, uri, tail) {
       );
       // this.playInstance.volume = 0;
       this.playing = false;
-      this.tail.setDelay(this.millisecondsToNextDownbeat(elapsedTime));
-      this.tailInstance = this.tail.play();
+      if (tail) {
+        this.tail.setDelay(this.millisecondsToNextDownbeat(elapsedTime));
+        this.tailInstance = this.tail.play();
+      }
     }
   }
 
