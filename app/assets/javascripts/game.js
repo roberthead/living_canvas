@@ -1,3 +1,10 @@
+// Vector class
+function Vector(xVelocity, yVelocity) {
+  // per second
+  this.xVelocity = xVelocity;
+  this.yVelocity = yVelocity;
+}
+
 // Sound class
 function Sound(id, uri) {
   var myself = this;
@@ -14,6 +21,10 @@ function Sound(id, uri) {
   this.register(uri);
 }
 
+function distance(x1, y1, x2, y2) {
+  return Math.pow(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2), 0.5);
+}
+
 // Circle class
 function Circle(x, y, radius, color, sound) {
   this.defineEaselShape = function(x, y, radius, color) {
@@ -28,8 +39,57 @@ function Circle(x, y, radius, color, sound) {
     this.easelShape.addEventListener("click", sound.play);
   }
 
+  this.playSound = function() {
+    this.sound.play();
+  }
+
+  this.radius = radius;
+  this.sound = sound;
   this.easelShape = this.defineEaselShape(x, y, radius, color);
   this.addClickSound(sound);
+
+  var maxSpeed = 5;
+  this.vector = new Vector(
+    Math.random() * 2 * maxSpeed - maxSpeed,
+    Math.random() * 2 * maxSpeed - maxSpeed
+  );
+
+  this.collidingWith = function(otherCircle) {
+
+  }
+
+  this.move = function(elapsedTime, stage) {
+    this.easelShape.x = this.easelShape.x + this.vector.xVelocity * elapsedTime / 50.0;
+    this.easelShape.y = this.easelShape.y + this.vector.yVelocity * elapsedTime / 50.0;
+    var xMin = this.radius;
+    var xMax = stage.canvas.width - this.radius;
+    var yMin = this.radius;
+    var yMax = stage.canvas.height - this.radius;
+    if (this.easelShape.x < xMin) {
+      console.log("too close to the left!");
+      this.easelShape.x = xMin;
+      this.vector.xVelocity = Math.abs(this.vector.xVelocity);
+      this.playSound();
+    } else if (this.easelShape.x > xMax) {
+      console.log("too close to the right!");
+      this.easelShape.x = xMax;
+      this.vector.xVelocity = Math.abs(this.vector.xVelocity) * -1;
+      this.playSound();
+    }
+    if (this.easelShape.y < yMin) {
+      console.log("too close to the top!");
+      this.easelShape.y = yMin;
+      this.vector.yVelocity = Math.abs(this.vector.yVelocity);
+      this.playSound();
+    } else if (this.easelShape.y > yMax) {
+      console.log("too close to the bottom!");
+      this.easelShape.y = yMax;
+      this.vector.yVelocity = Math.abs(this.vector.yVelocity) * -1;
+      this.playSound();
+    }
+  }
+
+  return this;
 }
 
 // Counter class
@@ -53,13 +113,10 @@ function Counter() {
   this.easelShape = this.defineEaselShape();
 }
 
-function PlayerCharacter() {
-
-}
-
 // Game singleton
 var Game = {
   canvasId: "gameCanvas",
+  circles: [],
   circleCount: 0,
   startTime: null,
   lastFrameTime: null,
@@ -72,8 +129,8 @@ var Game = {
 
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
-    this.addCircle("DeepSkyBlue", "sounds/thunder.mp3");
-    this.addCircle("Red", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
+    this.addCircle("#222277", "sounds/thunder.mp3");
+    this.addCircle("#552200", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
     this.addCounter();
     this.stage.update();
     window.requestAnimationFrame(this.executeFrame.bind(this));
@@ -81,7 +138,7 @@ var Game = {
 
   executeFrame: function() {
     this.setFrameTimes();
-    this.processActions();
+    this.processMotion();
     this.drawFrame();
     window.requestAnimationFrame(this.executeFrame.bind(this));
   },
@@ -99,11 +156,14 @@ var Game = {
     this.computedFPS = ((this.computedFPS || currentFPS) + currentFPS) / 2;
   },
 
-  processActions: function() {
+  processMotion: function() {
     var elapsedSeconds = Math.floor(this.elapsedTime / 1000);
     if (this.secondsDisplay != elapsedSeconds) {
       this.secondsDisplay = elapsedSeconds;
       this.counter.update(this.secondsDisplay);
+    }
+    for (circle of this.circles) {
+      circle.move(this.elapsedFrameTime, this.stage);
     }
   },
 
@@ -115,6 +175,7 @@ var Game = {
     this.circleCount++;
     var sound = new Sound("Sound" + this.circleCount, soundUri);
     var circle = new Circle(200 * this.circleCount, 100, 50, color, sound);
+    this.circles.push(circle);
     this.stage.addChild(circle.easelShape);
   },
 
