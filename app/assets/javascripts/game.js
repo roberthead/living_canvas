@@ -15,12 +15,16 @@ var Game = {
   secondsDisplay: 0,
   computedFPS: 0,
   counter: null,
+  nightSounds: null,
+  daySounds: null,
 
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
     this.addCircle("#222277", "sounds/thunder.mp3");
-    this.addCircle("#552200", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
+    // this.addCircle("#552200", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
     this.addCounter();
+    this.addNightSounds();
+    this.addDaySounds();
     this.stage.update();
     window.requestAnimationFrame(this.executeFrame.bind(this));
   },
@@ -54,6 +58,8 @@ var Game = {
     for (circle of this.circles) {
       circle.move(this.elapsedFrameTime, this.stage);
     }
+    this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
+    this.daySounds.respondToLocation(this.circles[0].easelShape.x);
   },
 
   drawFrame: function() {
@@ -62,7 +68,7 @@ var Game = {
 
   addCircle: function(color, soundUri) {
     this.circleCount++;
-    var sound = new Sound("Sound" + this.circleCount, soundUri);
+    var sound = new Sound("Circle" + this.circleCount, soundUri);
     var circle = new Circle(200 * this.circleCount, 100, 50, color, sound);
     this.circles.push(circle);
     this.stage.addChild(circle.easelShape);
@@ -71,6 +77,14 @@ var Game = {
   addCounter: function() {
     this.counter = new Counter();
     this.stage.addChild(this.counter.easelShape);
+  },
+
+  addNightSounds: function() {
+    this.nightSounds = new HorizontalSound("Night", "//s3-us-west-2.amazonaws.com/pagescape/nighttime.mp3", 0);
+  },
+
+  addDaySounds: function() {
+    this.daySounds = new HorizontalSound("Day", "//s3-us-west-2.amazonaws.com/pagescape/forest-crows.mp3", 960);
   },
 
   log: function(content) {
