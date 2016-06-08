@@ -32,6 +32,31 @@ function Circle(x, y, radius, color, sound) {
   this.addClickSound(sound);
 }
 
+// Counter class
+function Counter() {
+  this.color = "#999999";
+  this.font = "20px Avenir";
+  this.xPosition = 5;
+  this.yPosition = 0;
+
+  this.defineEaselShape = function() {
+    var text = new createjs.Text("0", this.font, this.color);
+    text.x = this.xPosition;
+    text.y = this.yPosition;
+    return text;
+  }
+
+  this.update = function(text) {
+    this.easelShape.text = text;
+  }
+
+  this.easelShape = this.defineEaselShape();
+}
+
+function PlayerCharacter() {
+
+}
+
 // Game singleton
 var Game = {
   canvasId: "gameCanvas",
@@ -43,11 +68,13 @@ var Game = {
   elapsedTime: 0,
   secondsDisplay: 0,
   computedFPS: 0,
+  counter: null,
 
   start: function() {
     this.stage = new createjs.Stage(this.canvasId);
     this.addCircle("DeepSkyBlue", "sounds/thunder.mp3");
     this.addCircle("Red", "//s3-us-west-2.amazonaws.com/pagescape/BBCNNBC.mp3");
+    this.addCounter();
     this.stage.update();
     window.requestAnimationFrame(this.executeFrame.bind(this));
   },
@@ -76,18 +103,24 @@ var Game = {
     var elapsedSeconds = Math.floor(this.elapsedTime / 1000);
     if (this.secondsDisplay != elapsedSeconds) {
       this.secondsDisplay = elapsedSeconds;
-      console.log("" + this.secondsDisplay + ": " + this.computedFPS + "fps")
+      this.counter.update(this.secondsDisplay);
     }
   },
 
   drawFrame: function() {
+    this.stage.update();
   },
 
   addCircle: function(color, soundUri) {
     this.circleCount++;
-    this.sound = new Sound("Sound" + this.circleCount, soundUri);
-    this.circle = new Circle(200 * this.circleCount, 100, 50, color, this.sound);
-    this.stage.addChild(this.circle.easelShape);
+    var sound = new Sound("Sound" + this.circleCount, soundUri);
+    var circle = new Circle(200 * this.circleCount, 100, 50, color, sound);
+    this.stage.addChild(circle.easelShape);
+  },
+
+  addCounter: function() {
+    this.counter = new Counter();
+    this.stage.addChild(this.counter.easelShape);
   },
 
   log: function(content) {
