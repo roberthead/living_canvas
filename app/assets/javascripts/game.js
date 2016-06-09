@@ -71,7 +71,7 @@ var Game = {
       this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
       this.daySounds.respondToLocation(this.circles[0].easelShape.x);
       if (elapsedSeconds == 60) {
-        var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0);
+        var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0, 0.75);
         stingerInstance.loop = 0;
         this.drumTrack.wrapUp();
       }
@@ -81,6 +81,7 @@ var Game = {
       }
       for (motive of this.motives) {
         motive.interactWith(this.circles[0], this.elapsedTime);
+        motive.circle.move(this.elapsedFrameTime, this.stage);
       }
     }
   },
@@ -112,9 +113,9 @@ var Game = {
 
   addDrumTrack: function() {
     var tail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
-    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/Drums.m4a", tail);
+    this.drumTrack = new SynchronizedSound("Drums", "//s3-us-west-2.amazonaws.com/pagescape/Drums.m4a", tail);
     var that = this;
-    this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime, -1); } );
+    this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime, -1, 1.0); } );
   },
 
   addMotives: function() {

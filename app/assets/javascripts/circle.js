@@ -13,12 +13,16 @@ function Circle(radius, color, sound) {
   }
 
   this.addClickSound = function(sound) {
-    this.easelShape.addEventListener("click", sound.play);
+    if (sound) {
+      this.easelShape.addEventListener("click", sound.play);
+    }
   }
 
   this.playSound = function() {
-    this.sound.play();
-    this.sound.setVolume(Math.random());
+    if (typeof this.sound === "function") {
+      this.sound.play();
+      this.sound.setVolume(Math.random());
+    }
   }
 
   this.sound = sound;

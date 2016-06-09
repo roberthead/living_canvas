@@ -67,7 +67,7 @@ function SynchronizedSound(id, uri, tail) {
     return 2000 - elapsedTime % 2000;
   }
 
-  this.trigger = function(elapsedTime, loop) {
+  this.trigger = function(elapsedTime, loop, volume) {
     if (!this.playing) {
       console.log('trigger ' + this.sound.id);
       this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(elapsedTime), loop: loop });
