@@ -23,7 +23,7 @@ function Motive(id, uri, color, loopDefault) {
   }
 
   this.readyToPlay = function() {
-    return !this.triggeredAt || this.millisecondsSinceTriggered > 2000;
+    return !this.triggeredAt || this.millisecondsSinceTriggered() > 2000;
   }
 
   this.interactWith = function(circle, elapsedTime) {
