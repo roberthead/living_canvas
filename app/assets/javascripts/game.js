@@ -6,6 +6,7 @@ function distance(x1, y1, x2, y2) {
 var Game = {
   canvasId: "gameCanvas",
   circles: [],
+  motives: [],
   circleCount: 0,
   startTime: null,
   lastFrameTime: null,
@@ -30,6 +31,7 @@ var Game = {
     this.addNightSounds();
     this.addDaySounds();
     this.addDrumTrack();
+    this.addMotives();
     this.stage.update();
     window.requestAnimationFrame(this.executeFrame.bind(this));
   },
@@ -71,11 +73,14 @@ var Game = {
       if (elapsedSeconds == 60) {
         var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0);
         stingerInstance.loop = 0;
-        // stingerInstance.volume = 0;
+        this.drumTrack.wrapUp();
       }
       if (elapsedSeconds >= 60) {
-        this.circles[0].vector.xVelocity = this.circles[0].vector.xVelocity * (60/61);
-        this.circles[0].vector.yVelocity = this.circles[0].vector.yVelocity * (60/61);
+        this.circles[0].vector.xVelocity = this.circles[0].vector.xVelocity * (59/60);
+        this.circles[0].vector.yVelocity = this.circles[0].vector.yVelocity * (59/60);
+      }
+      for (motive of this.motives) {
+        motive.interactWith(this.circles[0], this.elapsedTime);
       }
     }
   },
@@ -107,9 +112,18 @@ var Game = {
 
   addDrumTrack: function() {
     var tail = new Sound("DrumTail", "//s3-us-west-2.amazonaws.com/pagescape/DrumsTail.m4a");
-    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/DrumsVerse.m4a", tail);
+    this.drumTrack = new SynchronizedSound("DrumVerse", "//s3-us-west-2.amazonaws.com/pagescape/Drums.m4a", tail);
     var that = this;
     this.circles[0].setOnBottom(function() { that.drumTrack.trigger(that.elapsedTime, -1); } );
+  },
+
+  addMotives: function() {
+    var motive = new Motive("RedMotive", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-2.mp3", "red");
+    this.motives.push(motive);
+    this.stage.addChild(motive.circle.easelShape);
+    var motive = new Motive("GreenMotive", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-3.mp3", "green");
+    this.motives.push(motive);
+    this.stage.addChild(motive.circle.easelShape);
   },
 
   log: function(content) {

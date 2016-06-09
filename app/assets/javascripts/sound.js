@@ -36,7 +36,6 @@ function HorizontalSound(id, uri, x) {
     distance = Math.abs(x - this.x)
     if (distance < maxDistance) {
       if (!this.playing) {
-        console.log('play!');
         this.sound.play();
         this.playing = true;
         this.sound.playInstance.paused = false;
@@ -57,6 +56,8 @@ function HorizontalSound(id, uri, x) {
 }
 
 function SynchronizedSound(id, uri, tail) {
+  // this.id = id;
+  // this.uri = uri;
   this.sound = new Sound(id, uri);
   this.tail = tail;
 
@@ -70,7 +71,7 @@ function SynchronizedSound(id, uri, tail) {
 
   this.trigger = function(elapsedTime, loop) {
     if (!this.playing) {
-      console.log('trigger drumTrack');
+      console.log('trigger ' + this.sound.id);
       this.playInstance = createjs.Sound.play(this.sound.id, { delay: this.millisecondsToNextDownbeat(elapsedTime), loop: loop });
       this.playing = true;
     } else {
@@ -89,7 +90,6 @@ function SynchronizedSound(id, uri, tail) {
         },
         this.millisecondsToNextDownbeat(elapsedTime)
       );
-      // this.playInstance.volume = 0;
       this.playing = false;
       if (tail) {
         this.tail.setDelay(this.millisecondsToNextDownbeat(elapsedTime));
