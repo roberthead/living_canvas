@@ -56,8 +56,6 @@ function HorizontalSound(id, uri, x) {
 }
 
 function SynchronizedSound(id, uri, tail) {
-  // this.id = id;
-  // this.uri = uri;
   this.sound = new Sound(id, uri);
   this.tail = tail;
 
