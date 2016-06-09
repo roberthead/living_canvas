@@ -62,9 +62,7 @@ var Game = {
       this.secondsDisplay = elapsedSeconds;
       this.counter.update(this.secondsDisplay);
     }
-    if (elapsedSeconds < 1) {
-      // this.stingerSound.trigger(this.elapsedTime);
-    } else {
+    if (elapsedSeconds > 0) {
       for (circle of this.circles) {
         circle.move(this.elapsedFrameTime, this.stage);
       }
