@@ -68,15 +68,6 @@ var Game = {
       }
       this.nightSounds.respondToLocation(this.circles[0].easelShape.x);
       this.daySounds.respondToLocation(this.circles[0].easelShape.x);
-      if (elapsedSeconds == 60) {
-        var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0, 0.75);
-        stingerInstance.loop = 0;
-        this.drumTrack.wrapUp();
-      }
-      if (elapsedSeconds >= 60) {
-        this.circles[0].vector.xVelocity = this.circles[0].vector.xVelocity * (59/60);
-        this.circles[0].vector.yVelocity = this.circles[0].vector.yVelocity * (59/60);
-      }
       for (motive of this.motives) {
         motive.interactWith(this.circles[0], this.elapsedTime);
         motive.circle.move(this.elapsedFrameTime, this.stage);
