@@ -108,10 +108,16 @@ var Game = {
   },
 
   addMotives: function() {
-    var motive = new Motive("RedMotive", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-2.mp3", "red");
+    var motive = new Motive("Thunder2", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-2.mp3", "#222222", 1);
     this.motives.push(motive);
     this.stage.addChild(motive.circle.easelShape);
-    var motive = new Motive("GreenMotive", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-3.mp3", "green");
+    var motive = new Motive("Thunder3", "//s3-us-west-2.amazonaws.com/pagescape/thunder-strike-3.mp3", "#555555", 1);
+    this.motives.push(motive);
+    this.stage.addChild(motive.circle.easelShape);
+    var motive = new Motive("Bassline", "//s3-us-west-2.amazonaws.com/pagescape/Bassline.m4a", "#339933", 4);
+    this.motives.push(motive);
+    this.stage.addChild(motive.circle.easelShape);
+    var motive = new Motive("Piano", "//s3-us-west-2.amazonaws.com/pagescape/Piano.m4a", "#333399", 2);
     this.motives.push(motive);
     this.stage.addChild(motive.circle.easelShape);
   },

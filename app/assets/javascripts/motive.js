@@ -1,5 +1,6 @@
 // Circle class
-function Motive(id, uri, color) {
+function Motive(id, uri, color, loopDefault) {
+  this.loopDefault = loopDefault;
   this.triggeredAt = null;
   this.radius = 10;
   this.sound = new SynchronizedSound(id, uri);
@@ -32,7 +33,7 @@ function Motive(id, uri, color) {
         console.log("ready to play!");
         console.log(this.sound);
         this.triggeredAt = new Date().getTime();
-        this.sound.trigger(elapsedTime, 0, 1.0);
+        this.sound.trigger(elapsedTime, this.loopDefault, 1.0);
       }
     }
   }
