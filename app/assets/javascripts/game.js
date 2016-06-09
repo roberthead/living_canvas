@@ -71,7 +71,7 @@ var Game = {
       if (elapsedSeconds == 60) {
         var stingerInstance = this.stingerSound.trigger(this.elapsedTime, 0);
         stingerInstance.loop = 0;
-        stingerInstance.volume = 0;
+        // stingerInstance.volume = 0;
       }
       if (elapsedSeconds >= 60) {
         this.circles[0].vector.xVelocity = this.circles[0].vector.xVelocity * (60/61);
@@ -87,7 +87,7 @@ var Game = {
   addCircle: function(color, soundUri) {
     this.circleCount++;
     var sound = new Sound("Circle" + this.circleCount, soundUri);
-    var circle = new Circle(200 * this.circleCount, 100, 50, color, sound);
+    var circle = new Circle(50, color, sound);
     this.circles.push(circle);
     this.stage.addChild(circle.easelShape);
   },
